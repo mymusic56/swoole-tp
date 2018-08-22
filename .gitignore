@@ -1,0 +1,8 @@
+.idea
+.buildpath
+.project
+composer.lock
+*.log
+thinkphp
+runtime
+vendor
