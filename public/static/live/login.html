@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Login</title>
+<script type="text/javascript">
+	var fontSize = window.screen.width/10;
+	
+	if (fontSize > 37.5) {
+		fontSize = 37.5;
+	}
+	
+	document.getElementsByTagName("html")[0].style.fontSize = 14+ "px";
+</script>
+<style>
+	*,::before,::after{
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+		-webkit-tap-highlight-color: transparent;
+	}
+	
+	body{
+		background-color: #f5f5f5;
+		font-family: Tahoma, '微软雅黑';
+	}
+	.container{
+		position: absolute;
+		width: 316px;
+		left: 50%;
+		top: 50%;
+		margin-top: -150px;
+		margin-left: -158px;
+	}
+	.logo {
+		text-align: center;
+	}
+	.box{
+		
+	}
+	.row{
+		width: 100%;
+		position: relative;
+		text-align: center;
+		display: block;
+	}
+	
+	.row .w_total{
+	}
+	.row .f_lelft{
+		float: left;
+	}
+	.row .f_right{
+		float: right;
+	}
+	
+	.icon{
+		display: inline-block;
+		background: url("./image/icons.png") no-repeat;
+		width: 24px;
+		height: 24px;
+	}
+	.icon-account{
+		background-position: 0 -109px;;
+		position: absolute;
+		left: 10px;
+		top: 9px;
+	}
+	
+	.icon-pwd{
+		background-position: 0 -134px;;
+		position: absolute;
+		left: 10px;
+		top: 20px;
+	}
+	
+	
+	.form-input{
+		border-radius: 10px;
+		border: solid 1px #ddd;
+		width: 316px;
+		padding: 10px 0 10px 30px;
+		outline: none;
+	}
+	
+	.form-input2{
+		margin-top: 10px;
+		width: 210px;
+	}
+	
+	.verify-code{
+		margin-top: 10px;
+		width: 100px;
+		line-height: 35px;
+		font-size: 14px;
+		border: solid 1px #999;
+	}
+	
+	.submit{
+		width: 100%;
+		margin-top: 10px;
+		border-radius: 5px;
+		-webkit-border-radius: 5px;
+		background: #0888ff;
+		border: solid 1px #0888ff;
+		color: #fff;
+		
+		font-size: 14px;
+		line-height: 44px;
+	}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="logo"><h3>Demo</h3></div>
+		<div class="box">
+			<form>
+				<div class="row">
+					<span class="icon icon-account"></span>
+					<input class="w_total form-input" name="mobile" type="text" value=""/>
+				</div>
+				<div class="row">
+					<span class="icon icon-pwd"></span>
+					<input class="form-input form-input2" name="code" type="text" value=""/>
+					<input id="authCodeBtn" class="verify-code" type="button" value="获取验证码">
+				</div>
+				<div class="row"><input id="submit-btn" class="submit" type="button" value="登录"/></div>
+			</form>
+		</div>
+	</div>
+		<script type="text/javascript" src="/static/lib/js/jquery-2.1.1.min.js"></script>
+		<script>
+		var json_token = '';
+		$(function () {
+			var $back = $('#back');
+			// 获取验证吗
+		  	$('#authCodeBtn').click(function (event) {
+
+			    var mobile = $(" input[ name='mobile' ] ").val()
+				url = "http://swoole-tp.mytest.com:9502?s=index/sms/sendCode&mobile="+mobile;
+				// $.post()
+				$.get(url, function (data) {
+					// TODO: 将下面3行代码删除
+					console.log(data);
+					if (data.status == 1) {
+						json_token = data.result.json_token;
+						console.log('发送完成');
+					}
+				});
+			});
+
+			// 提交表单
+			$('#submit-btn').click(function (event) {
+				event.preventDefault();
+				var formData = $('form').serialize();
+				// TODO: 请求后台接口跳转界面，前端跳转或者后台跳
+				var url = "http://swoole-tp.mytest.com:9502?s=index/user/login&"+formData+"&json_token="+json_token;
+				console.log(url);
+				$.get(url, function (data) {
+					console.log(data);
+					// location.href='index.html';
+				});
+			});
+
+			// 返回上一页
+			$back.click(function (e) {
+				window.history.back();
+			});
+		});
+	</script>
+</body>
+</html>
