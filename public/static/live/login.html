@@ -160,6 +160,9 @@
 				console.log(url);
 				$.get(url, function (data) {
 					console.log(data);
+					if (data.status == 1) {
+						window.location.href="live.html";
+					}
 					// location.href='index.html';
 				});
 			});

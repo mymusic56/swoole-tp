@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<h1>WebSocket Test</h1>
+<script>
+	if ("WebSocket" in window) {
+		var ws = new WebSocket("ws://swoole-tp.mytest.com:9502");
+		ws.onopen = function(){
+			ws.send("client connect to server success");
+			console.log("连接到服务器");
+		}
+		
+		ws.onmessage = function(event){
+			console.log("接收数据"+event.data);
+		}
+		
+		ws.onclose = function(event){
+			console.log("服务器关闭连接");
+		}
+	} else {
+		alert("浏览器不支持websocket");
+	}
+	
+</script>
+</body>
+</html>

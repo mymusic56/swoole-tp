@@ -26,6 +26,9 @@ class HttpServer{
      */
     public function onOpen($serv, $request)
     {
+        //将用户信息存redis无序集合里面
+        $redis = \app\common\service\SwooleRedis::getInstance()->redis;
+        $redis->sAdd(\app\common\service\RedisKeyList::onlineUserFdList(), $request->fd);
         echo "client:{$request->fd} connected.\n";
     }
     
@@ -49,6 +52,7 @@ class HttpServer{
     {
         //加载TP静载资源文件
         // 定义应用目录
+        echo "-------------------------------------------";
         define('APP_PATH', __DIR__ . '/../application/');
         require __DIR__ . '/../thinkphp/base.php';
     }
@@ -95,7 +99,7 @@ class HttpServer{
         $_GET = $request->get;
         $_POST = $request->post;
         $_FILES = $request->files;
-        
+        $_SERVER = [];
         foreach ($request->server as $k => $v) {
             $_SERVER[strtoupper($k)] = $v;
         }
@@ -104,8 +108,10 @@ class HttpServer{
         think\App::run()->send();
         $data = ob_get_contents();
         ob_clean();
-//         $response->header('Content-Type', 'text/html;charset=utf-8');
-        $response->header('Content-Type', 'application/json;charset=utf-8');
+        $response->header('Content-Type', 'text/html;charset=utf-8');
+        if (isset($_SERVER['Content-Type'])) {
+            $response->header('Content-Type', $_SERVER['Content-Type']);
+        }
         $response->end($data);
     }
     
