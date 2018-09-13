@@ -27,7 +27,7 @@ class HttpServer{
     public function onOpen($serv, $request)
     {
         //将用户信息存redis无序集合里面
-        $redis = \app\common\service\SwooleRedis::getInstance()->redis;
+        $redis = \app\common\service\RedisService::getInstance()->redis;
         $redis->sAdd(\app\common\service\RedisKeyList::onlineUserFdList(), $request->fd);
         echo "client:{$request->fd} connected.\n";
     }
@@ -52,7 +52,6 @@ class HttpServer{
     {
         //加载TP静载资源文件
         // 定义应用目录
-        echo "-------------------------------------------";
         define('APP_PATH', __DIR__ . '/../application/');
         require __DIR__ . '/../thinkphp/base.php';
     }
@@ -76,7 +75,7 @@ class HttpServer{
         if ($class && $method && class_exists($class)) {
             $obj = new $class();
             if (method_exists($obj, $method)) {
-                $obj->$method($data);
+                $obj->$method($serv, $data);
             }else{
                 echo $class.'->'.$method.'()不存在';
             }
@@ -138,6 +137,9 @@ class HttpServer{
      */
     public function onClose($serv, $fd, $reactorId)
     {
+        //将退出的用户从在线用户中移除
+        $redis = \app\common\service\RedisService::getInstance()->redis;
+        $redis->srem(\app\common\service\RedisKeyList::onlineUserFdList(), $fd);
         echo "client: $fd closed \n";
     }
 }

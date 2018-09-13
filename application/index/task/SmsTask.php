@@ -5,7 +5,7 @@ use app\common\service\sms\AliSms;
 
 class SmsTask
 {
-    public function execute($data)
+    public function execute($serv, $data)
     {
         #发送验证码
 //         AliSms::send($mobile, $code, $msg);
